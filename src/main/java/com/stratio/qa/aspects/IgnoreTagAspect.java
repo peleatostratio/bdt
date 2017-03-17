@@ -57,7 +57,6 @@ public class IgnoreTagAspect {
     @Around(value = "addIgnoreTagPointcutScenario(formatter, reporter, runtime)")
     public void aroundAddIgnoreTagPointcut(ProceedingJoinPoint pjp, Formatter formatter, Reporter reporter,
                                            Runtime runtime) throws Throwable {
-        logger.debug("Executing pointcut CucumberScenario run method");
 
         CucumberScenario scen = (CucumberScenario) pjp.getThis();
         Scenario scenario = (Scenario) scen.getGherkinModel();
@@ -72,9 +71,6 @@ public class IgnoreTagAspect {
 
         List<String> tagList = new ArrayList<>();
         tagList = tags.stream().map(Tag::getName).collect(Collectors.toList());
-//        for (Tag tag : tags) {
-//            tagList.add(tag.getName());
-//        }
 
         if (tagList.contains("@ignore")) {
             ignore = true;

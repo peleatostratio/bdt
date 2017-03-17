@@ -390,7 +390,7 @@ public class CucumberReporter implements Formatter, Reporter {
             String passJira = System.getProperty("passwordjira");
             Boolean validTicket = false;
 
-            if (((userJira != null) || (passJira != null)) && !"".equals(ticket)) {
+            if ((userJira != null) || (passJira != null)  || "".equals(ticket)) {
                 CommonG comm = new CommonG();
                 AsyncHttpClient client = new AsyncHttpClient();
                 Future<Response> response = null;
@@ -469,18 +469,16 @@ public class CucumberReporter implements Formatter, Reporter {
 
             if (tagList.contains("@ignore")) {
                 ignored = true;
-                if (tagList.contains("@tillfixed")) {
-                    Pattern pattern = Pattern.compile("@(.*?)\\((.*?)\\)");
-                    Matcher matcher = pattern.matcher(tagList.get(tagList.indexOf("@tillfixed")));
+                for (String tag: tagList) {
+                    Pattern pattern = Pattern.compile("@tillfixed\\((.*?)\\)");
+                    Matcher matcher = pattern.matcher(tag);
                     if (matcher.find()) {
-                        ignoreReason = true;
-                        ticket = matcher.group(2);
+                        ticket = matcher.group(1);
                         if (isValidJiraTicket(ticket)) {
-                            exceptionmsg = "This scenario was skipped because of https://stratio.atlassian.net/browse/" + ticket;
-                            isJiraTicketDone = true;
-                        } else {
-                            isWrongTicket = true;
+                            exceptionmsg = "This scenario was skipped because of a pending Jira ticket: " + ticket;
+                            ignoreReason = true;
                         }
+                        break;
                     }
                 }
 
@@ -520,7 +518,7 @@ public class CucumberReporter implements Formatter, Reporter {
                 } else if (isWrongTicket) {
                     msg1 = "The scenario was ignored due to unexistant ticket " + ticket;
                 } else {
-                    msg1 = "The scenario has no valid reason for being ignored. <p>Valid values: @tillfixed(ISSUE-007) @unimplemented @manual @toocomplex</p>";
+                    msg1 = "The scenario has no valid reason for being ignored. \n Valid values: @tillfixed(ISSUE-007) @unimplemented @manual @toocomplex";
                 }
 
                 Element exception = createException(doc, msg1, msg1, msg2);

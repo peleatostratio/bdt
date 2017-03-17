@@ -77,13 +77,14 @@ public class IgnoreTagAspect {
             if (tagList.contains("runOnEnvs")) {
                 ignoreReason = true;
             }
-            if (tagList.contains("@tillfixed")) {
-                Pattern pattern = Pattern.compile("@(.*?)\\((.*?)\\)");
-                Matcher matcher = pattern.matcher(tagList.get(tagList.indexOf("@tillfixed")));
+            for (String tag: tagList) {
+                Pattern pattern = Pattern.compile("@tillfixed\\((.*?)\\)");
+                Matcher matcher = pattern.matcher(tag);
                 if (matcher.find()) {
-                    String ticket = matcher.group(2);
+                    String ticket = matcher.group(1);
                     logger.warn("Scenario '" + scenario.getName() + "' ignored because of ticket: " + ticket);
                     ignoreReason = true;
+                    break;
                 }
             }
             if (tagList.contains("@unimplemented")) {

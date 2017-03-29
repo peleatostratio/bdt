@@ -1841,7 +1841,11 @@ public class CommonG {
         }
 
         if (envVar != null) {
-            ThreadProperty.set(envVar, this.getRemoteSSHConnection().getResult().trim());
+            if (this.getRemoteSSHConnection() != null) {
+                ThreadProperty.set(envVar, this.getRemoteSSHConnection().getResult().trim());
+            }else{
+                ThreadProperty.set(envVar,this.getCommandResult().trim());
+            }
         }
         if (this.getCommandExitStatus() != exitStatus) {
             if (System.getProperty("logLevel", "") != null && System.getProperty("logLevel", "").equalsIgnoreCase("debug")) {

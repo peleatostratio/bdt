@@ -361,6 +361,52 @@ public class WhenGSpec extends BaseGSpec {
         commonspec.getLogger().info("Response value found after " + timeout + " seconds");
     }
 
+
+    /**
+     * Same sendRequest, but in this case, the rersponse is checked until it contains the expected value
+     *
+     * @param timeout
+     * @param wait
+     * @param requestType
+     * @param endPoint
+     * @param responseVal
+     * @throws Exception
+     */
+    @When("^in less than '(\\d+?)' seconds, checking each '(\\d+?)' seconds, I send a '(.+?)' request to '(.+?)' so that the response does not contain '(.+?)'$")
+    public void sendRequestNotFound(Integer timeout, Integer wait, String requestType, String endPoint, String responseVal) throws Exception {
+
+        Boolean found = true;
+        AssertionError ex = null;
+
+        String type = "";
+        Future<Response> response;
+        Pattern pattern = CommonG.matchesOrContains(responseVal);
+        int seconds =0;
+        for (int i = 0; (i <= timeout); i += wait) {
+            seconds = i;
+            response = commonspec.generateRequest(requestType, false, null, null, endPoint, "", type, "");
+            commonspec.setResponse(requestType, response.get());
+            commonspec.getLogger().debug("Checking response value");
+            try {
+                assertThat(commonspec.getResponse().getResponse()).containsPattern(pattern);
+                found = true;
+                timeout = i;
+            } catch (AssertionError e) {
+                found =false;
+                Thread.sleep(wait * 1000);
+            }
+            if (!found) {
+                break;
+            }
+        }
+        if (found) {
+            ex = new AssertionError();
+            commonspec.getLogger().info("Response value still found yet after " + seconds + " seconds");
+            throw (ex);
+        }
+        commonspec.getLogger().info("Response value not found after " + timeout + " seconds");
+    }
+
     @When("^I login to '(.+?)' based on '([^:]+?)' as '(json|string)'$")
     public void loginUser(String endPoint, String baseData, String type) throws Exception {
         sendRequestNoDataTable("POST", endPoint, null, null, null, baseData, null, type);

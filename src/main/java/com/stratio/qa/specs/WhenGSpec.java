@@ -381,7 +381,7 @@ public class WhenGSpec extends BaseGSpec {
         String type = "";
         Future<Response> response;
         Pattern pattern = CommonG.matchesOrContains(responseVal);
-        int seconds =0;
+        int seconds = 0;
         for (int i = 0; (i <= timeout); i += wait) {
             seconds = i;
             response = commonspec.generateRequest(requestType, false, null, null, endPoint, "", type, "");
@@ -392,7 +392,7 @@ public class WhenGSpec extends BaseGSpec {
                 found = true;
                 timeout = i;
             } catch (AssertionError e) {
-                found =false;
+                found = false;
                 Thread.sleep(wait * 1000);
             }
             if (!found) {

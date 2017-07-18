@@ -328,83 +328,59 @@ public class WhenGSpec extends BaseGSpec {
      * @param responseVal
      * @throws Exception
      */
-    @When("^in less than '(\\d+?)' seconds, checking each '(\\d+?)' seconds, I send a '(.+?)' request to '(.+?)' so that the response contains '(.+?)'$")
-    public void sendRequestTimeout(Integer timeout, Integer wait, String requestType, String endPoint, String responseVal) throws Exception {
+    @When("^in less than '(\\d+?)' seconds, checking each '(\\d+?)' seconds, I send a '(.+?)' request to '(.+?)' so that the response( does not)? contains '(.+?)'$")
+    public void sendRequestTimeout(Integer timeout, Integer wait, String requestType, String endPoint, String contains, String responseVal) throws Exception {
 
-        Boolean found = false;
+        if (contains == null || contains.isEmpty()){
+            contains="does";
+        }else{
+            contains = contains.substring(1);
+        }
+        Boolean found = contains.equals("does not");
         AssertionError ex = null;
 
         String type = "";
         Future<Response> response;
         Pattern pattern = CommonG.matchesOrContains(responseVal);
-
         for (int i = 0; (i <= timeout); i += wait) {
-            if (found) {
+            if (found && contains.equals("does")) {
                 break;
             }
             response = commonspec.generateRequest(requestType, false, null, null, endPoint, "", type, "");
             commonspec.setResponse(requestType, response.get());
             commonspec.getLogger().debug("Checking response value");
             try {
-                assertThat(commonspec.getResponse().getResponse()).containsPattern(pattern);
-                found = true;
-                timeout = i;
+                if (contains.equals("does")) {
+                    assertThat(commonspec.getResponse().getResponse()).containsPattern(pattern);
+                    found = true;
+                    timeout = i;
+                }
+                if (contains.equals("does not")){
+                    assertThat(commonspec.getResponse().getResponse()).doesNotContain(responseVal);
+                    found=false;
+                    timeout = i;
+                }
             } catch (AssertionError e) {
-                commonspec.getLogger().info("Response value don't found yet after " + i + " seconds");
+                if (found.equals(false)) {
+                    commonspec.getLogger().info("Response value not found after " + i + " seconds");
+                }else{
+                    commonspec.getLogger().info("Response value found after " + i + " seconds");
+                }
                 Thread.sleep(wait * 1000);
                 ex = e;
             }
-        }
-        if (!found) {
-            throw (ex);
-        }
-        commonspec.getLogger().info("Response value found after " + timeout + " seconds");
-    }
-
-
-    /**
-     * Same sendRequest, but in this case, the rersponse is checked until it contains the expected value
-     *
-     * @param timeout
-     * @param wait
-     * @param requestType
-     * @param endPoint
-     * @param responseVal
-     * @throws Exception
-     */
-    @When("^in less than '(\\d+?)' seconds, checking each '(\\d+?)' seconds, I send a '(.+?)' request to '(.+?)' so that the response does not contain '(.+?)'$")
-    public void sendRequestNotFound(Integer timeout, Integer wait, String requestType, String endPoint, String responseVal) throws Exception {
-
-        Boolean found = true;
-        AssertionError ex = null;
-
-        String type = "";
-        Future<Response> response;
-        Pattern pattern = CommonG.matchesOrContains(responseVal);
-        int seconds = 0;
-        for (int i = 0; (i <= timeout); i += wait) {
-            seconds = i;
-            response = commonspec.generateRequest(requestType, false, null, null, endPoint, "", type, "");
-            commonspec.setResponse(requestType, response.get());
-            commonspec.getLogger().debug("Checking response value");
-            try {
-                assertThat(commonspec.getResponse().getResponse()).containsPattern(pattern);
-                found = true;
-                timeout = i;
-            } catch (AssertionError e) {
-                found = false;
-                Thread.sleep(wait * 1000);
-            }
-            if (!found) {
+            if (!found && contains.equals("does not")) {
                 break;
             }
         }
-        if (found) {
-            ex = new AssertionError();
-            commonspec.getLogger().info("Response value still found yet after " + seconds + " seconds");
+        if ((!found && contains.equals("does")) || (found && contains.equals("does not"))) {
             throw (ex);
         }
-        commonspec.getLogger().info("Response value not found after " + timeout + " seconds");
+        if(contains.equals("does")){
+            commonspec.getLogger().info("Success! Response value found after " + timeout + " seconds");
+        }else{
+            commonspec.getLogger().info("Success! Response value not found after " + timeout + " seconds");
+        }
     }
 
     @When("^I login to '(.+?)' based on '([^:]+?)' as '(json|string)'$")

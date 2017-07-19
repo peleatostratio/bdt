@@ -332,9 +332,9 @@ public class WhenGSpec extends BaseGSpec {
     public void sendRequestTimeout(Integer timeout, Integer wait, String requestType, String endPoint, String contains, String responseVal) throws Exception {
 
         Boolean searchUntilContains;
-        if (contains == null || contains.isEmpty()){
+        if (contains == null || contains.isEmpty()) {
             searchUntilContains = Boolean.TRUE;
-        }else{
+        } else {
             searchUntilContains = Boolean.FALSE;
         }
         Boolean found = !searchUntilContains;
@@ -355,15 +355,15 @@ public class WhenGSpec extends BaseGSpec {
                     assertThat(commonspec.getResponse().getResponse()).containsPattern(pattern);
                     found = true;
                     timeout = i;
-                }else{
+                } else {
                     assertThat(commonspec.getResponse().getResponse()).doesNotContain(responseVal);
-                    found=false;
+                    found = false;
                     timeout = i;
                 }
             } catch (AssertionError e) {
                 if (!found) {
                     commonspec.getLogger().info("Response value not found after " + i + " seconds");
-                }else{
+                } else {
                     commonspec.getLogger().info("Response value found after " + i + " seconds");
                 }
                 Thread.sleep(wait * 1000);
@@ -371,14 +371,14 @@ public class WhenGSpec extends BaseGSpec {
             }
             if (!found && !searchUntilContains) {
                 break;
-            } 
+            }
         }
         if ((!found && searchUntilContains) || (found && !searchUntilContains)) {
             throw (ex);
         }
-        if(searchUntilContains){
+        if (searchUntilContains) {
             commonspec.getLogger().info("Success! Response value found after " + timeout + " seconds");
-        }else{
+        } else {
             commonspec.getLogger().info("Success! Response value not found after " + timeout + " seconds");
         }
     }

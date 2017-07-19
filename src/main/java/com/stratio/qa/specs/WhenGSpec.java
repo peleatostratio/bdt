@@ -371,7 +371,7 @@ public class WhenGSpec extends BaseGSpec {
             }
             if (!found && !searchUntilContains) {
                 break;
-            }
+            } 
         }
         if ((!found && searchUntilContains) || (found && !searchUntilContains)) {
             throw (ex);

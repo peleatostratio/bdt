@@ -331,37 +331,37 @@ public class WhenGSpec extends BaseGSpec {
     @When("^in less than '(\\d+?)' seconds, checking each '(\\d+?)' seconds, I send a '(.+?)' request to '(.+?)' so that the response( does not)? contains '(.+?)'$")
     public void sendRequestTimeout(Integer timeout, Integer wait, String requestType, String endPoint, String contains, String responseVal) throws Exception {
 
+        Boolean searchUntilContains;
         if (contains == null || contains.isEmpty()){
-            contains="does";
+            searchUntilContains = Boolean.TRUE;
         }else{
-            contains = contains.substring(1);
+            searchUntilContains = Boolean.FALSE;
         }
-        Boolean found = contains.equals("does not");
+        Boolean found = !searchUntilContains;
         AssertionError ex = null;
 
         String type = "";
         Future<Response> response;
         Pattern pattern = CommonG.matchesOrContains(responseVal);
         for (int i = 0; (i <= timeout); i += wait) {
-            if (found && contains.equals("does")) {
+            if (found && searchUntilContains) {
                 break;
             }
             response = commonspec.generateRequest(requestType, false, null, null, endPoint, "", type, "");
             commonspec.setResponse(requestType, response.get());
             commonspec.getLogger().debug("Checking response value");
             try {
-                if (contains.equals("does")) {
+                if (searchUntilContains) {
                     assertThat(commonspec.getResponse().getResponse()).containsPattern(pattern);
                     found = true;
                     timeout = i;
-                }
-                if (contains.equals("does not")){
+                }else{
                     assertThat(commonspec.getResponse().getResponse()).doesNotContain(responseVal);
                     found=false;
                     timeout = i;
                 }
             } catch (AssertionError e) {
-                if (found.equals(false)) {
+                if (!found) {
                     commonspec.getLogger().info("Response value not found after " + i + " seconds");
                 }else{
                     commonspec.getLogger().info("Response value found after " + i + " seconds");
@@ -369,14 +369,14 @@ public class WhenGSpec extends BaseGSpec {
                 Thread.sleep(wait * 1000);
                 ex = e;
             }
-            if (!found && contains.equals("does not")) {
+            if (!found && !searchUntilContains) {
                 break;
             }
         }
-        if ((!found && contains.equals("does")) || (found && contains.equals("does not"))) {
+        if ((!found && searchUntilContains) || (found && !searchUntilContains)) {
             throw (ex);
         }
-        if(contains.equals("does")){
+        if(searchUntilContains){
             commonspec.getLogger().info("Success! Response value found after " + timeout + " seconds");
         }else{
             commonspec.getLogger().info("Success! Response value not found after " + timeout + " seconds");

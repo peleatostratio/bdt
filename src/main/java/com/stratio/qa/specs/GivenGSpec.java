@@ -409,6 +409,17 @@ public class GivenGSpec extends BaseGSpec {
     }
 
     /**
+     * Run javascript code
+     *
+     * @param code code to run
+     * @throws Exception exception
+     */
+    @Given("^I run the javascript code '(.+?)'$")
+    public void runJavaScript(String code) throws Exception {
+        this.commonspec.getJavascriptExecutor().executeScript(code);
+    }
+
+    /**
      * Set app host and port {@code host, @code port}
      *
      * @param host host where app is running

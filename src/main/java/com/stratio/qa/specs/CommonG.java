@@ -129,6 +129,8 @@ public class CommonG {
 
     private Optional<SearchResult> previousLdapResults;
 
+    private JavascriptExecutor js;
+
     /**
      * Checks if a given string matches a regular expression or contains a string
      *
@@ -322,6 +324,26 @@ public class CommonG {
      */
     public void setDriver(RemoteWebDriver driver) {
         this.driver = driver;
+    }
+
+
+    /**
+     * Get the JavascriptExecutor.
+     *
+     * @return JavascriptExecutor
+     */
+    public JavascriptExecutor getJavascriptExecutor() {
+        return js;
+    }
+
+
+    /**
+     * Get the JavascriptExecutor.
+     *
+     * @return JavascriptExecutor
+     */
+    public void setJavascriptExecutor(JavascriptExecutor j) {
+        this.js = j;
     }
 
     /**

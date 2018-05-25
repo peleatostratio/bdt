@@ -27,6 +27,7 @@ import cucumber.api.java.Before;
 import java.io.File;
 
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CommandInfo;
@@ -182,6 +183,7 @@ public class HookGSpec extends BaseGSpec {
         HttpClient.Factory factory = new ApacheHttpClient.Factory(new HttpClientFactory(60000, 60000));
         HttpCommandExecutor executor = new HttpCommandExecutor(new HashMap<String, CommandInfo>(), new URL(grid), factory);
         commonspec.setDriver(new RemoteWebDriver(executor, capabilities));
+        this.commonspec.setJavascriptExecutor((JavascriptExecutor) this.commonspec.getDriver());
         if (headers != null && !"".equals(headers)) {
             String[] ar = headers.split(",");
             String headersString = "";

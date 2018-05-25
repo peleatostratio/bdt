@@ -200,7 +200,7 @@ public class HookGSpec extends BaseGSpec {
                             "  respHeaders: [],                                                " +
                             "  filters: []                                                     " +
                             "}]));                                                             ");
-        } 
+        }
         commonspec.getDriver().manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT, TimeUnit.SECONDS);
         commonspec.getDriver().manage().timeouts().implicitlyWait(IMPLICITLY_WAIT, TimeUnit.SECONDS);
         commonspec.getDriver().manage().timeouts().setScriptTimeout(SCRIPT_TIMEOUT, TimeUnit.SECONDS);

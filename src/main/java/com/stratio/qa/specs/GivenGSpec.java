@@ -525,7 +525,6 @@ public class GivenGSpec extends BaseGSpec {
      * @param password   (required if pemFile null)
      * @param pemFile    (required if password null)
      * @throws Exception exception
-     *
      */
     @Given("^I open a ssh connection to '(.+?)'( in port '(.+?)')? with user '(.+?)'( and password '(.+?)')?( using pem file '(.+?)')?$")
     public void openSSHConnection(String remoteHost, String tmp, String remotePort, String user, String foo, String password, String bar, String pemFile) throws Exception {

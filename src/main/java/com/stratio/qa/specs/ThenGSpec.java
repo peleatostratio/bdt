@@ -613,7 +613,7 @@ public class ThenGSpec extends BaseGSpec {
         } else {
             ThreadProperty.set(envVar, null);
         }
-    } 
+    }
 
 
     /**
